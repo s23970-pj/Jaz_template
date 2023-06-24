@@ -1,0 +1,55 @@
+
+`@GetMapping("/currency/{minValue}/")
+    public List<String> getCurrency(@PathVariable("minValue") double minValue) {
+        String url = "http://api.nbp.pl/api/exchangerates/tables/a/2023-05-15/2023-05-15/";
+
+        Root[] roots = restTemplate.getForObject(url, Root[].class);
+        List<String> filteredCodes = new ArrayList<>();
+
+        if (roots != null) {
+            for (Root root : roots) {
+                for (Rate rate : root.getRates()){
+                    if (rate.getMid()> minValue){
+                        filteredCodes.add(rate.getCode());
+                    }
+                }
+            }
+        }
+
+        return filteredCodes;
+    }`
+
+
+tu masz działajacy kontroler
+
+
+jak wstawisz do tego mojego projektu to będzie działać
+
+tylko musisz rozdzielic sobie na serwis i sparametryzować
+
+bo daty sa na sztywno
+
+`@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+public class Root {
+    public String table;
+    public String no;
+    public String effectiveDate;
+    public ArrayList<Rate> rates;
+
+}`
+
+no zamiast zwracać średni kurs danej waluty to zwracać Kody walut dla których kurs >= jakiś tam zadany
+Emilian
+musisz troche zmienić
+Emilian
+strzelać po inny endpoint
+Emilian
+ale na takiej zasadzie jak tam jest
+Emilian
+stwórz fabryke która wyciągnie z tego response tylko te obiekty które mają mean wieksze niż jakieś tam podane  przez ciebie
+Emilian
+Emilian Murawski
+jako typ zwracany może byc obiekt z listą kodów
